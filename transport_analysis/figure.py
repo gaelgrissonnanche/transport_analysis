@@ -47,9 +47,15 @@ class Figure:
     def add_label(self, label, xloc=0.22, yloc=0.86, ha="left"):
         self.fig.text(xloc, yloc, label, ha=ha)
 
-    def add_legend(self, location=0, fontsize=16):
-        self.axes.legend(loc = location, fontsize = fontsize, frameon = False,
-                         numpoints=1, markerscale = 1, handletextpad=0.5)
+    def add_legend(self, location=0, xloc=np.nan, yloc=np.nan, fontsize=16):
+        if np.isnan(xloc) and np.isnan(yloc):
+            self.axes.legend(loc=location, fontsize=fontsize, frameon=False,
+                            numpoints=1, markerscale=1, handletextpad=0.5)
+        else:
+            self.axes.legend(loc=location,bbox_to_anchor=(xloc, yloc),
+                             fontsize=fontsize, frameon=False,
+                            numpoints=1, markerscale=1, handletextpad=0.5)
+
 
     def add_hlines(self, y=0, color="k", ls="--", linewith=0.6):
         self.axes.axhline(y=y, ls=ls, c=color, linewidth=linewith)
@@ -82,7 +88,7 @@ class Figure:
     def set_xlog(self):
         self.axes.set_xscale('log')
 
-    def set_xlog(self):
+    def set_ylog(self):
         self.axes.set_yscale('log')
 
     def print_figure(self, show=True):

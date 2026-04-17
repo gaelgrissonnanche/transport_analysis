@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.interpolate import PchipInterpolator
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # Load coefficients of thermocouples for E = f(T_Celsius) where E is in Volts
@@ -12,7 +13,7 @@ coeff_E_above_273K = np.array([0, 5.8665508710E1, 4.5032275582E-2, 2.8908407212E
                             -1.2536600497E-15, 2.1489217569E-18, -1.4388041782E-21,
                             3.5960899481E-25])[::-1]*1e-6
 
-def S_ther(T_Kelvin):
+def Sther(T_Kelvin):
     """
     This function returns the Seebeck coefficient of the thermocouple
     concerned (by default type "E") at a certain temperature. The input of the
@@ -30,7 +31,8 @@ def S_ther(T_Kelvin):
     S_values = np.piecewise(x, [x <= 0, x > 0], [S_below, S_above]) # is in Volt / K
     return S_values
 
-def E_ther(T_Kelvin):
+
+def Ether(T_Kelvin):
     """
     This function returns the integrated Seebeck coefficient in temperature
     of the thermocouple concerned (by default type "E") at a certain
@@ -45,3 +47,43 @@ def E_ther(T_Kelvin):
                     [lambda x: np.polyval(coeff_E_below_273K,x),
                     lambda x: np.polyval(coeff_E_above_273K,x)])
     return E_values
+
+
+def Ether_inv(y, niter=3):
+    """
+    Compute the inverse of the monotonic function Ether(y) for scalar or array inputs.
+
+    The inverse is obtained in two steps: first, a monotonic spline interpolator
+    provides an initial guess on a predefined x-range; then a few Newton iterations
+    refine the result for improved accuracy.
+
+    Parameters
+    ----------
+    y : float or array-like
+        Value(s) of Ether(x) for which to compute the inverse.
+    niter : int, optional
+        Number of Newton iterations used to refine the interpolated initial guess.
+        Default is 3.
+
+    Returns
+    -------
+    x : float or ndarray
+        Approximate value(s) such that Ether(x) = y.
+
+    Notes
+    -----
+    This function assumes that Ether(x) is monotonic on the interval [0.0, 10.0].
+    Values of y outside the corresponding range of Ether(x) will return invalid
+    results because extrapolation is disabled.
+    """
+    T_min, T_max = 0.0, 663.0 # Kelvin
+    T_grid = np.linspace(T_min, T_max, 10000)
+    E_grid = Ether(T_grid)
+
+    index = np.argsort(E_grid)
+    inv_guess = PchipInterpolator(E_grid[index], T_grid[index], extrapolate=False)
+
+    x = inv_guess(y)
+    for _ in range(niter):
+        x -= (Ether(x) - y) / Sther(x)
+    return x
