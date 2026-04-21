@@ -49,7 +49,7 @@ def Ether(T_Kelvin):
     return E_values
 
 
-def Ether_inv(y, niter=3):
+def Ether_inv(E, niter=3):
     """
     Compute the inverse of the monotonic function Ether(y) for scalar or array inputs.
 
@@ -81,9 +81,9 @@ def Ether_inv(y, niter=3):
     E_grid = Ether(T_grid)
 
     index = np.argsort(E_grid)
-    inv_guess = PchipInterpolator(E_grid[index], T_grid[index], extrapolate=False)
+    Ether_inv_guess = PchipInterpolator(E_grid[index], T_grid[index], extrapolate=False)
 
-    x = inv_guess(y)
+    T = Ether_inv_guess(E)
     for _ in range(niter):
-        x -= (Ether(x) - y) / Sther(x)
-    return x
+        T -= (Ether(T) - E) / Sther(T)
+    return T

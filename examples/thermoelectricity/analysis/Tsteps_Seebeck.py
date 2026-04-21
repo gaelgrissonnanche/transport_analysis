@@ -4,7 +4,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ## Info sample //////////////////////////////////////////////////////////////////#
-SAMPLE_NAME = r"SLIO $x$ = 0.258 G37"
+SAMPLE_NAME = r"SLIO $x$ = 0.158 G37"
 SAMPLE_LABEL = r"SLIOx=0.158G37S14"
 
 ## Which measu rement? ///////////////////////////////////////////////////////////#
@@ -76,10 +76,19 @@ figure.add_label("$B$ = " + str(FIELD) + " T", xloc=0.79, yloc=0.79, ha="right")
 figure.print_figure()
 fig_list.append(figure.fig)
 
-## dT --------------------------------------------------------------------#
+## dT AC --------------------------------------------------------------------#
 figure = Figure(r"$T$ ( K )", r"$dT_{\rm AC}$ ( mK )")
 figure.add_label(SAMPLE_NAME, xloc=0.79, ha="right")
 figure.add_plot(seebeck_exp["Tav"], seebeck_exp["dT_AC"] * 1e3, color="#4351fe", marker="s", ls="")
+# figure.ymin = 0
+figure.add_label("$B$ = " + str(FIELD) + " T", xloc=0.79, yloc=0.79, ha="right")
+figure.print_figure()
+fig_list.append(figure.fig)
+
+## dT_DC / Tav --------------------------------------------------------------------#
+figure = Figure(r"$T$ ( K )", r"$dT_{\rm DC} / T $ ( mK )")
+figure.add_label(SAMPLE_NAME, xloc=0.79, ha="right")
+figure.add_plot(seebeck_exp["Tav"], seebeck_exp["dT_DC"] / seebeck_exp["Tav"]*100, color="#000000", marker="s", ls="")
 # figure.ymin = 0
 figure.add_label("$B$ = " + str(FIELD) + " T", xloc=0.79, yloc=0.79, ha="right")
 figure.print_figure()
@@ -93,6 +102,7 @@ figure.add_hlines(y=-180)
 figure.add_hlines(y=180)
 figure.add_plot(seebeck_exp["Tav"], seebeck_exp["dT_phase"], color="#4e5aff", label = "dT", marker="s", ls="")
 figure.add_plot(seebeck_exp["Tav"], seebeck_exp["Vs_phase"], color="#44ff2d", label = "Vs", marker="s", ls="")
+figure.add_plot(seebeck_exp["Tav"], seebeck_exp["dT_phase"]-seebeck_exp["Vs_phase"], color="#000000", label = "Diff", marker="s", ls="")
 figure.add_legend(location=4)
 # figure.ymax = 260
 figure.add_label("$B$ = " + str(FIELD) + " T", xloc=0.79, yloc=0.79, ha="right")

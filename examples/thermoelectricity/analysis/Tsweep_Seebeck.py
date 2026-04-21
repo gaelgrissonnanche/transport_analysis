@@ -4,7 +4,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 ## Info sample //////////////////////////////////////////////////////////////////#
-SAMPLE_NAME = r"SLIO $x$ = 0.258 G37"
+SAMPLE_NAME = r"SLIO $x$ = 0.158 G37"
 SAMPLE_LABEL = r"SLIOx=0.158G37S14"
 
 ## Which measurement? ///////////////////////////////////////////////////////////#
@@ -84,7 +84,7 @@ figure.add_hlines(y=-180)
 figure.add_hlines(y=180)
 figure.add_plot(seebeck_exp["Tav"], seebeck_exp["dT_phase"], color="#4e5aff", label = "dT")
 figure.add_plot(seebeck_exp["Tav"], seebeck_exp["Vs_phase"], color="#44ff2d", label = "Vs")
-figure.add_plot(seebeck_exp["Tav"], seebeck_exp["dT_phase"] - seebeck_exp["Vs_phase"], color="#000000", label = "Diff")
+figure.add_plot(seebeck_exp["Tav"], seebeck_exp["dT_phase"]-seebeck_exp["Vs_phase"], color="#000000", label = "Diff")
 figure.add_legend(location=4)
 # figure.ymax = 260
 figure.add_label("$B$ = " + str(FIELD) + " T", xloc=0.79, yloc=0.79, ha="right")

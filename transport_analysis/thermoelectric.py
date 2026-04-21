@@ -155,18 +155,11 @@ class SeebeckTemp:
         else:
             self.data["Tp_DC"] = self.data["T0"]
             self.data["Tm_DC"] = self.data["T0"]
-            self.data["Tav"]   = self.data["T0"]
-            self.data["dT_DC"] = self.data["Tp_DC"] - self.data["Tm_DC"]
+        self.data["dT_DC"] = self.data["Tp_DC"] - self.data["Tm_DC"]
+        self.data["Tav"]   = (self.data["Tp_DC"] + self.data["Tm_DC"]) / 2
 
     def _dc_temp_thermocouples(self, T0, dV_DC):
         T_DC = Ether_inv(dV_DC + Ether(T0))
-        # T_DC = dV_DC / S_ther(T0) + T0
-        # error = np.ones_like(T0)
-        # ## Reduce error
-        # while np.max(error) > 1e-8:
-        #     T_DC_old = T_DC
-        #     T_DC = dV_DC / S_ther((T0 + T_DC)/2) + T0
-        #     error = np.abs(T_DC - T_DC_old)
         return T_DC
 
     def calc_seebeck(self):
@@ -174,7 +167,7 @@ class SeebeckTemp:
         if self.use_DC == True:
             self.data["S_DC"] = self.data["Vs_DC"] / self.data["dT_DC"]
         else:
-            self.data["S_DC"] = 0
+            self.data["S_DC"] = np.zeros_like(self.data["dT_DC"])
 
     def create_file_name_analyzed(self):
         """
@@ -224,6 +217,7 @@ class SeebeckTemp:
             return self.data[key]
         except KeyError:
             print(f"{key} is not a defined")
+
 
 
 class SeebeckField(SeebeckTemp):
